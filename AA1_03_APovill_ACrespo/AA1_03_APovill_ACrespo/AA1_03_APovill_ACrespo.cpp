@@ -53,14 +53,12 @@ void RestructArray(Ball* panel, int size)
     }
 }
 
-//void RestructArray()
-
 Ball* ResizeArray(Ball* original, int oldSize, int newSize) {
     Ball* nuevoArray = new Ball[newSize];
 
     // Copiar los elementos antiguos (hasta el menor tamaño)
     for (int i = 0; i < newSize; i++) {
-        nuevoArray[i] = original[i];
+        nuevoArray[i] = original[i + 1];
     }
 
     // Liberar memoria del array antiguo
@@ -73,8 +71,6 @@ void PrintScreen(Player player, Panel panel, char* pos)
 {
     system("cls");
     panel.printPanel();
-    std::cout << std::endl;
-    std::cout << std::endl;
     std::cout << std::endl;
     for (int i = 0; i < panel.size; i++)
     {
@@ -107,10 +103,6 @@ void PrintScreen(Player player, Panel panel, char* pos)
 
 int main()
 {
-    //if ((GetKeyState(VK_LBUTTON) & 0x80) != 0)
-    //{
-    //    Ball shoot(Player player);
-    //}
     Panel panel;
     panel.init();
     Player player;
@@ -123,7 +115,13 @@ int main()
     {
         PrintScreen(player, panel, position);
         char input;
+        std::cout << "\nDEBUG: Ammo = " << player.ammo << ", Gun[0] = " << (int)player.gun[0] << std::endl;
         std::cin >> input;
+        for (int i = 0; i < panel.size; i++)
+        {
+            panel.verifier(i, panel.panel[i]);
+        }
+
         if ((input == 'd' || input == 'D') && player.pos < pPosSize - 1)
         {
             player.pos++;
@@ -134,20 +132,11 @@ int main()
         }
         else if (input == 'w' || input == 'W')
         {
-            panel.resizePanel(panel.size + 1);
-
-            player.shoot();
+            panel.resizePanel();
+            pPosSize = panel.size;
+            panel.insert(player.pos, player.shoot());
+         
         }
         player.SetPos(position, pPosSize);
     }
 }
-
-// Ejecutar programa: Ctrl + F5 o menú Depurar > Iniciar sin depurar
-// Depurar programa: F5 o menú Depurar > Iniciar depuración
-
-// Sugerencias para primeros pasos: 1. Use la ventana del Explorador de soluciones para agregar y administrar archivos
-//   2. Use la ventana de Team Explorer para conectar con el control de código fuente
-//   3. Use la ventana de salida para ver la salida de compilación y otros mensajes
-//   4. Use la ventana Lista de errores para ver los errores
-//   5. Vaya a Proyecto > Agregar nuevo elemento para crear nuevos archivos de código, o a Proyecto > Agregar elemento existente para agregar archivos de código existentes al proyecto
-//   6. En el futuro, para volver a abrir este proyecto, vaya a Archivo > Abrir > Proyecto y seleccione el archivo .sln
