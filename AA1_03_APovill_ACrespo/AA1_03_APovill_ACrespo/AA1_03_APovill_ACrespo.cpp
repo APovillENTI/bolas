@@ -27,7 +27,7 @@ void RestructArray(Ball* panel, int size)
                 c = i + 2;
                 i = c;
             }
-        }        
+        }
         else if (c < size)
         {
             panel[a] = panel[i];
@@ -53,19 +53,6 @@ void RestructArray(Ball* panel, int size)
     }
 }
 
-Ball* ResizeArray(Ball* original, int oldSize, int newSize) {
-    Ball* nuevoArray = new Ball[newSize];
-
-    // Copiar los elementos antiguos (hasta el menor tamaño)
-    for (int i = 0; i < newSize; i++) {
-        nuevoArray[i] = original[i + 1];
-    }
-
-    // Liberar memoria del array antiguo
-    delete[] original;
-
-    return nuevoArray;
-}
 
 void PrintScreen(Player player, Panel panel, char* pos)
 {
@@ -103,6 +90,7 @@ void PrintScreen(Player player, Panel panel, char* pos)
 
 int main()
 {
+    srand(time(NULL));
     Panel panel;
     panel.init();
     Player player;
@@ -115,12 +103,12 @@ int main()
     {
         PrintScreen(player, panel, position);
         char input;
-        std::cout << "\nDEBUG: Ammo = " << player.ammo << ", Gun[0] = " << (int)player.gun[0] << std::endl;
+        std::cout << "\nDEBUG: Ammo = " << player.ammo << ", Gun[0] = " << (int)player.gun[0] << " panelSize " << panel.size << " posSize " << pPosSize << " pPos= " << player.pos << std::endl;
         std::cin >> input;
-        for (int i = 0; i < panel.size; i++)
-        {
-            panel.verifier(i, panel.panel[i]);
-        }
+        //for (int i = 0; i < panel.size; i++)
+        //{
+        //    panel.verifier(i, panel.panel[i]);
+        //}
 
         if ((input == 'd' || input == 'D') && player.pos < pPosSize - 1)
         {
@@ -134,9 +122,11 @@ int main()
         {
             panel.resizePanel();
             pPosSize = panel.size;
-            panel.insert(player.pos, player.shoot());
-         
+            panel.insert(player.pos, player.shoot());         
         }
         player.SetPos(position, pPosSize);
     }
+    delete[] panel.panel;
+    delete[] player.gun;
+    delete[] position;
 }

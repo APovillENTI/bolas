@@ -14,30 +14,27 @@ enum class Ball
     X
 };
 
-Ball* ResizeArray(Ball* original, int oldSize, int newSize);
 
 void RestructArray(Ball* panel, int size);
 
 struct Player
 {
     std::string pName;
-    int pos;
-    char symbol;
-    int score;
+    int pos = 0;
+    char symbol = '^';
+    int score = 0;
     int ammo = PLAYER_AMMO;
-    Ball* gun = new Ball[ammo];
+    Ball* gun;
 
     void init(std::string name, int position)
     {
         pName = name;
         pos = position;
-        symbol = '^';
-        score = 0;
-        ammo = PLAYER_AMMO;
+        gun = new Ball[ammo];
         for (int i = 0; i < ammo; i++)
         {
             gun[i] = (Ball)(rand() % 5);
-        };
+        }
     }
 
     void SetPos(char* position, int size)
@@ -55,11 +52,26 @@ struct Player
         }
     }
 
+    void ResizeArray() //Modifica el tamaño de bolas que pueden haber en el panel en base a newSize.
+    {
+        if (ammo <= 1) return; // Protección adicional
+
+        ammo--; // Primero reducir
+
+        Ball* nuevoArray = new Ball[ammo];
+        for (int i = 0; i < ammo; i++) {
+            nuevoArray[i] = gun[i + 1]; // Empieza desde el 2do, ya que se dispara el primero
+        }
+
+        delete[] gun;
+        gun = nuevoArray;
+    }
+
+
     Ball shoot()
     {
         Ball ball = gun[0];
-        gun = ResizeArray(gun, ammo, ammo-1);
-        ammo--;
+        ResizeArray();
         return ball;
     }
 };
@@ -140,10 +152,10 @@ struct Panel
         size++;
         panel = new Ball[size];
         for (int i = 0; i < size; i++)
-            {
-                panel[i] = nuevoArray[i];
-            }
-            delete[] nuevoArray;     
+        {
+            panel[i] = nuevoArray[i];
+        }
+        delete[] nuevoArray;     
     }
 
     void deleteThree(int position) //Elimina 3 bolas consecutivas del panel a partir de la position dada.
@@ -160,7 +172,7 @@ struct Panel
         do
         {
             panel[size - 2] = (Ball)(rand() % 5);
-        } while (panel[size - 2] == panel[size - 1]);
+        } while (panel[size - 2] == panel[size - 3]);
 
         panel[size - 1] = (Ball)(rand() % 5);
     }
@@ -192,4 +204,5 @@ struct Panel
 };
 
 void PrintScreen(Player player, Panel panel, char* pos);
+
 
